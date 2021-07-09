@@ -9,6 +9,9 @@ from restless.openapi import make_spec
 from restless.security import ApiKeyAuth
 import yaml
 from deepdiff import DeepDiff
+import os
+
+os.chdir(os.path.dirname(__file__))
 
 
 class TestSpec(TestCase):
