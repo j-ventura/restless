@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 extras = {
     'azure': ['azure-functions'],
-    'tests': ['requests']
+    'tests': ['requests'],
+    'spec': ['pyyaml']
 }
 
 all_deps = set()
