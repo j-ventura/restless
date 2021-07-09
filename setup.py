@@ -13,7 +13,7 @@ for deps in extras.values():
         all_deps.add(dep)
 
 setup(
-    name='restless',
+    name='restless-cloud',
     version='0.0.1',
     author="Joaquim Ventura",
     author_email="allaphor@gmail.com",
