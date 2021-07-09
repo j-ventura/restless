@@ -15,7 +15,9 @@ for deps in extras.values():
 setup(
     name='restless',
     version='0.0.1',
-    description='A router for AWS Lambda, Flask and Azure Functions',
+    author="Joaquim Ventura",
+    author_email="allaphor@gmail.com",
+    description='A router for AWS Lambda and Azure Functions',
     packages=find_packages(),
     install_requires=['jsonschema', 'pydantic'],
     package_data={
