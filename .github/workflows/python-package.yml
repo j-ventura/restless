@@ -5,7 +5,7 @@ name: Python package
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
 
@@ -35,6 +35,7 @@ jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     needs:
       - test
     steps:
