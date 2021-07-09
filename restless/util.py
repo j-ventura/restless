@@ -22,6 +22,9 @@ def camel_to_snake(obj):
 
 
 def snake_to_camel(obj):
+    if hasattr(obj, 'dict'):
+        obj = obj.dict()
+
     if isinstance(obj, (list, set)):
         return [snake_to_camel(i) for i in obj]
     elif isinstance(obj, dict):
@@ -37,14 +40,14 @@ def snake_to_camel(obj):
 
 class UniversalEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, datetime):
+        if hasattr(obj, 'dict'):
+            return obj.dict()
+        elif isinstance(obj, datetime):
             return obj.isoformat()
         elif isinstance(obj, str):
             return obj
         elif isinstance(obj, Iterable):
             return list(obj)
-        elif hasattr(obj, 'json'):
-            return obj.json()
 
         return json.JSONEncoder.default(self, obj)
 

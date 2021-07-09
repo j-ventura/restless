@@ -7,6 +7,8 @@ from datetime import datetime
 from typing import List, Optional
 from restless.openapi import make_spec
 from restless.security import ApiKeyAuth
+import yaml
+from deepdiff import DeepDiff
 
 
 class TestSpec(TestCase):
@@ -63,5 +65,18 @@ class TestSpec(TestCase):
                 ApiKeyAuth(ApiKeyAuth.In.header, name='Authorization'),
                 ApiKeyAuth(ApiKeyAuth.In.query, name='token')
             ],
-            default_security=['Authorization']
+            default_security=['Authorization'],
+            file_name='new_aws.yaml'
+        )
+
+        with open('spec.yaml') as fixture, open('new_aws.yaml') as test:
+            difference = DeepDiff(
+                yaml.load(fixture),
+                yaml.load(test)
+            )
+
+        self.assertEqual(
+            {},
+            difference,
+            difference
         )

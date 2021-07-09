@@ -153,6 +153,44 @@ class TestHandler(TestCase):
                 out["statusCode"]
             )
 
+    def testBodyParameterCamel(self):
+        handler = Handler(Request, Response, use_camel_case=True)
+
+        class User(BodyParameter):
+            id: int
+            name = 'John Doe'
+            signup_ts: Optional[datetime] = None
+            friends: List[int] = []
+
+        @handler.handle('post', '/some/body')
+        def get_basic(user: User) -> {200: dict}:
+            return {"parameter_value": user}
+
+        with self.subTest('OK'):
+            out = handler(
+                {
+                    "path": "/some/body",
+                    "httpMethod": 'post',
+                    'body': json.dumps(
+                        {
+                            'id': '123',
+                            'signup_ts': '2019-06-01 12:22',
+                            'friends': [1, 2, '3'],
+                        }
+                    )
+                }
+            )
+
+            self.assertEqual(
+                200,
+                out["statusCode"]
+            )
+
+            self.assertEqual(
+                '{"parameterValue": {"id": 123, "signupTs": "2019-06-01T12:22:00", "friends": [1, 2, 3], "name": "John Doe"}}',
+                out['body']
+            )
+
     def testOptionalParameter(self):
         handler = Handler(Request, Response)
 
@@ -356,6 +394,33 @@ class TestHandler(TestCase):
                 'headers': {'Content-Type': 'application/json'},
                 'isBase64Encoded': False,
                 'body': '{"parameter_value": "1"}'
+            },
+            out
+        )
+
+    def testQueryParameterCamel(self):
+        handler = Handler(Request, Response, use_camel_case=True)
+
+        @handler.handle('get', '/some/path')
+        def get_basic(the_parameter: QueryParameter) -> {200: dict}:
+            return {"parameter_value": the_parameter}
+
+        out = handler(
+            {
+                "path": "/some/path",
+                "httpMethod": 'get',
+                "queryStringParameters": {
+                    "theParameter": "1"
+                }
+            }
+        )
+
+        self.assertEqual(
+            {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'isBase64Encoded': False,
+                'body': '{"parameterValue": "1"}'
             },
             out
         )

@@ -6,6 +6,7 @@ from inspect import _empty
 from restless.parameters import BinaryParameter
 from restless.security import Security
 from typing import List, Union
+from restless.util import snake_to_camel
 
 OPENAPI = "3.0.0"
 
@@ -50,7 +51,7 @@ def make_spec(
         title,
         description,
         version,
-        handler: Handler,
+        api_handler: Handler,
         file_name='spec.yaml',
         servers=None,
         security: List[Security] = None,
@@ -98,7 +99,7 @@ def make_spec(
             for s in sec:
                 assert s in spec['components']['securitySchemes']
 
-    for handler in get_handlers(handler.handlers):
+    for handler in get_handlers(api_handler.handlers):
         if handler.path not in spec['paths']:
             spec['paths'][handler.path] = {}
 
@@ -164,8 +165,13 @@ def make_spec(
             if isinstance(model, Hashable) and model in TYPE_MAPPING:
                 t['type'] = TYPE_MAPPING[model]
             elif hasattr(model, 'schema'):
-                spec['components']['schemas'][model.__name__] = model.schema()
                 t['$ref'] = '#/components/schemas/' + model.__name__
+                spec['components']['schemas'][model.__name__] = model.schema()
+
+                if api_handler.use_camel_case:
+                    spec['components']['schemas'][model.__name__] = snake_to_camel(
+                        spec['components']['schemas'][model.__name__]
+                    )
 
             target['responses'][str(code)] = {
                 'description': description,
@@ -179,7 +185,7 @@ def make_spec(
         for param, model in handler.parameters.items():
             if getattr(model, "LOCATION", "body") not in ['body', 'formData']:
                 param_spec = {
-                    'name': param,
+                    'name': snake_to_camel(param) if api_handler.use_camel_case else param,
                     'in': getattr(model, "LOCATION", "body"),
                     'required': handler.sig.parameters[param].default == _empty,
                     'description': model.__doc__ or param,
@@ -195,6 +201,11 @@ def make_spec(
 
                 if hasattr(model, 'schema'):
                     spec['components']['schemas'][model.__name__] = model.schema()
+
+                    if api_handler.use_camel_case:
+                        spec['components']['schemas'][model.__name__] = snake_to_camel(
+                            spec['components']['schemas'][model.__name__]
+                        )
 
                     target['requestBody']['content']['application/json'] = {
                         'schema': {
