@@ -65,27 +65,56 @@ class TestSpec(TestCase):
             """Header Parameter"""
             return {"parameter_value": parameter}
 
-        make_spec(
-            'The API',
-            'Some description',
-            '0.0.1',
-            handler,
-            security=[
-                ApiKeyAuth(ApiKeyAuth.In.header, name='Authorization'),
-                ApiKeyAuth(ApiKeyAuth.In.query, name='token')
-            ],
-            default_security=['Authorization'],
-            file_name='new_aws.yaml'
-        )
-
-        with open('spec.yaml') as fixture, open('new_aws.yaml') as test:
-            difference = DeepDiff(
-                yaml.load(fixture),
-                yaml.load(test)
+        with self.subTest('Regular'):
+            make_spec(
+                'The API',
+                'Some description',
+                '0.0.1',
+                handler,
+                security=[
+                    ApiKeyAuth(ApiKeyAuth.In.header, name='Authorization'),
+                    ApiKeyAuth(ApiKeyAuth.In.query, name='token')
+                ],
+                default_security=['Authorization'],
+                file_name='new_aws.yaml'
             )
 
-        self.assertEqual(
-            {},
-            difference,
-            difference
-        )
+            with open('spec.yaml') as fixture, open('new_aws.yaml') as test:
+                difference = DeepDiff(
+                    yaml.load(fixture),
+                    yaml.load(test)
+                )
+
+            self.assertEqual(
+                {},
+                difference,
+                difference
+            )
+
+        with self.subTest('Camel Cased'):
+            handler.use_camel_case = True
+
+            make_spec(
+                'The API',
+                'Some description',
+                '0.0.1',
+                handler,
+                security=[
+                    ApiKeyAuth(ApiKeyAuth.In.header, name='Authorization'),
+                    ApiKeyAuth(ApiKeyAuth.In.query, name='token')
+                ],
+                default_security=['Authorization'],
+                file_name='new_aws.yaml'
+            )
+
+            with open('camel_spec.yaml') as fixture, open('new_aws.yaml') as test:
+                difference = DeepDiff(
+                    yaml.load(fixture),
+                    yaml.load(test)
+                )
+
+            self.assertEqual(
+                {},
+                difference,
+                difference
+            )

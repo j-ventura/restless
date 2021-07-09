@@ -174,7 +174,7 @@ class TestHandler(TestCase):
                     'body': json.dumps(
                         {
                             'id': '123',
-                            'signup_ts': '2019-06-01 12:22',
+                            'signupTs': '2019-06-01 12:22',
                             'friends': [1, 2, '3'],
                         }
                     )
