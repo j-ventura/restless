@@ -20,11 +20,6 @@ setup(
     description='A router for AWS Lambda and Azure Functions',
     packages=find_packages(),
     install_requires=['jsonschema', 'pydantic'],
-    package_data={
-        '': [
-            './flask/swagger/*',
-        ]
-    },
     extras_require=dict(
         all=list(all_deps),
         **extras
