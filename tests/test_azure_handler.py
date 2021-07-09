@@ -1,9 +1,9 @@
 from unittest import TestCase
-from omnirest import Handler
-from omnirest.interfaces.azure import Response, Request
-from omnirest.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
+from restless import Handler
+from restless.interfaces.azure import Response, Request
+from restless.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
     BinaryParameter, BodyParameter
-from omnirest.errors import Forbidden, Unauthorized, Missing
+from restless.errors import Forbidden, Unauthorized, Missing
 import requests
 from base64 import b64encode
 import json

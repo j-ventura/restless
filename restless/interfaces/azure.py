@@ -1,9 +1,9 @@
 import json
 from azure.functions import HttpRequest, HttpResponse
-from omnirest.util import snake_to_camel, camel_to_snake, UniversalEncoder
+from restless.util import snake_to_camel, camel_to_snake, UniversalEncoder
 import re
 from urllib.parse import unquote_plus
-from omnirest.interfaces import BaseRequest
+from restless.interfaces import BaseRequest
 from typing import Iterable
 
 

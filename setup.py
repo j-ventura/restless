@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='omnirest',
+    name='restless',
     version='0.0.1',
     description='A router for AWS Lambda, Flask and Azure Functions',
     packages=find_packages(),

@@ -1,4 +1,4 @@
-from omnirest.util import FormData
+from restless.util import FormData
 from pydantic import BaseModel
 
 

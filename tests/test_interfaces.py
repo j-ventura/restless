@@ -1,5 +1,5 @@
 from unittest import TestCase
-from omnirest.interfaces import azure, aws
+from restless.interfaces import azure, aws
 from base64 import b64encode
 
 
@@ -248,7 +248,7 @@ class TestAzure(TestCase):
 
         self.assertEqual(
             {
-                'body': {'a': 'B'},
+                'body': {'A': 'B'},
                 'headers': {'header1': 'value1', 'header2': 'value2'},
                 'method': 'GET',
                 'path': '/my/path',

@@ -1,5 +1,5 @@
-from omnirest.util import camel_to_snake, snake_to_camel, UniversalEncoder
-from omnirest.interfaces import BaseRequest
+from restless.util import camel_to_snake, snake_to_camel, UniversalEncoder
+from restless.interfaces import BaseRequest
 import json
 from urllib.parse import unquote_plus
 from base64 import b64decode, b64encode

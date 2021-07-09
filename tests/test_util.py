@@ -1,4 +1,4 @@
-from omnirest.util import camel_to_snake, snake_to_camel
+from restless.util import camel_to_snake, snake_to_camel
 from unittest import TestCase
 
 

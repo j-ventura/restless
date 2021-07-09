@@ -2,12 +2,12 @@ import re
 from collections import defaultdict
 from typing import Callable, ClassVar, Iterable, List
 from inspect import signature
-from omnirest.interfaces import BaseRequest
-from omnirest.util import FormData
-from omnirest.parameters import BinaryParameter, BodyParameter
-from omnirest.errors import Forbidden, Unauthorized, Missing
+from restless.interfaces import BaseRequest
+from restless.util import FormData
+from restless.parameters import BinaryParameter, BodyParameter
+from restless.errors import Forbidden, Unauthorized, Missing
 from pydantic.error_wrappers import ValidationError
-from omnirest.security import Security
+from restless.security import Security
 from traceback import print_exc
 
 

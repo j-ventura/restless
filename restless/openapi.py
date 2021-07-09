@@ -1,10 +1,10 @@
 import yaml
-from omnirest import Handler
+from restless import Handler
 from datetime import datetime
 from collections import Hashable
 from inspect import _empty
-from omnirest.parameters import BinaryParameter
-from omnirest.security import Security
+from restless.parameters import BinaryParameter
+from restless.security import Security
 from typing import List, Union
 
 OPENAPI = "3.0.0"

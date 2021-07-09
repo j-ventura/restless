@@ -1,12 +1,12 @@
 from unittest import TestCase
-from omnirest import Handler
-from omnirest.interfaces.aws import Response, Request
-from omnirest.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
+from restless import Handler
+from restless.interfaces.aws import Response, Request
+from restless.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
     BinaryParameter, BodyParameter
 from datetime import datetime
 from typing import List, Optional
-from omnirest.openapi import make_spec
-from omnirest.security import ApiKeyAuth
+from restless.openapi import make_spec
+from restless.security import ApiKeyAuth
 
 
 class TestSpec(TestCase):
