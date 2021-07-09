@@ -11,9 +11,17 @@ S2C = re.compile('(.)_([a-zA-Z])')
 
 def camel_to_snake(obj):
     if isinstance(obj, (list, set)):
-        return [camel_to_snake(i) if not isinstance(i, str) else i for i in obj]
+        return [
+            camel_to_snake(i)
+            if not isinstance(i, str) else i
+            for i in obj
+        ]
     elif isinstance(obj, dict):
-        return {camel_to_snake(k): camel_to_snake(v) if not isinstance(v, str) else v for k, v in obj.items()}
+        return {
+            camel_to_snake(k): camel_to_snake(v)
+            if not isinstance(v, str) else v
+            for k, v in obj.items()
+        }
     elif isinstance(obj, str):
         string = C2S1.sub(r'\1_\2', obj)
         return C2S2.sub(r'\1_\2', string).lower()
@@ -26,10 +34,15 @@ def snake_to_camel(obj):
         obj = obj.dict()
 
     if isinstance(obj, (list, set)):
-        return [snake_to_camel(i) for i in obj]
+        return [
+            snake_to_camel(i)
+            if not isinstance(i, str) else i
+            for i in obj
+        ]
     elif isinstance(obj, dict):
         return {
             snake_to_camel(k): snake_to_camel(v)
+            if not isinstance(v, str) else v
             for k, v in obj.items()
         }
     elif isinstance(obj, str):

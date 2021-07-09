@@ -11,6 +11,10 @@ class TestCases(TestCase):
             (
                     {"someKeyYeyA": {"deeeperKey": "value", "listKey": ["A", {"someKey": "someValue"}]}},
                     {"some_key_yey_a": {"deeeper_key": "value", "list_key": ["A", {"some_key": "someValue"}]}}
+            ),
+            (
+                ["some string yey", "another String", "andNow", {"camelKey": "CamelValue"}],
+                ["some string yey", "another String", "andNow", {"camel_key": "CamelValue"}]
             )
         ]:
             with self.subTest(case[0]):
@@ -27,6 +31,10 @@ class TestCases(TestCase):
             (
                     {"someKeyYeyA": {"deeeperKey": "value", "listKey": ["a", {"someKey": "someValue"}]}},
                     {"some_key_yey_a": {"deeeper_key": "value", "list_key": ["a", {"some_key": "someValue"}]}}
+            ),
+            (
+                ["some_string_yey", "another String", "andNowThis", {"camelKey": "CamelValue"}],
+                ["some_string_yey", "another String", "andNowThis", {"camel_key": "CamelValue"}]
             )
         ]:
             with self.subTest(case[1]):
