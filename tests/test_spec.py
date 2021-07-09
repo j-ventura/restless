@@ -57,7 +57,13 @@ class TestSpec(TestCase):
 
         @handler.handle('post', '/some/binary', security=None)
         def post_binary(parameter: BinaryParameter) -> {200: dict}:
+            """Binary Parameter"""
             return {"parameter_value": parameter.decode()}
+
+        @handler.handle('post', '/some/header', security=None)
+        def post_binary(parameter: HeaderParameter) -> {200: dict}:
+            """Header Parameter"""
+            return {"parameter_value": parameter}
 
         make_spec(
             'The API',

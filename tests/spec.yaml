@@ -91,7 +91,7 @@ paths:
       - base
   /some/binary:
     post:
-      description: post_binary
+      description: Binary Parameter
       parameters: []
       requestBody:
         content:
@@ -218,6 +218,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Not Found
+      tags:
+      - some
+  /some/header:
+    post:
+      description: Header Parameter
+      parameters:
+      - description: parameter
+        in: header
+        name: parameter
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Some description
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+      security: []
       tags:
       - some
   /some/other/form:
