@@ -8,7 +8,7 @@ from restless.parameters import BinaryParameter, BodyParameter
 from restless.errors import Forbidden, Unauthorized, Missing
 from pydantic.error_wrappers import ValidationError
 from restless.security import Security
-from traceback import print_exc
+from pydantic import BaseModel
 
 
 class PathHandler:
@@ -70,7 +70,7 @@ class PathHandler:
 
         expected_type = self.sig.return_annotation[status]
 
-        if isinstance(body, Iterable) and not isinstance(body, (dict, str)):
+        if isinstance(body, Iterable) and not isinstance(body, (dict, str, BaseModel)):
             body = list(body)
 
             assert all(

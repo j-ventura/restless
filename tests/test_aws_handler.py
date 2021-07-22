@@ -12,6 +12,33 @@ from typing import List, Optional
 
 
 class TestHandler(TestCase):
+    def testObjectReponse(self):
+        handler = Handler(Request, Response)
+
+        class Object(BodyParameter):
+            id: int
+
+        @handler.handle('post', '/some/generator')
+        def get_generator(parameter: QueryParameter = "1") -> {200: Object}:
+            return Object(id=1)
+
+        out = handler(
+            {
+                "path": "/some/generator",
+                "httpMethod": 'post'
+            }
+        )
+
+        self.assertEqual(
+            {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'isBase64Encoded': False,
+                'body': '{"id": 1}'
+            },
+            out
+        )
+
     def testHeaders(self):
         handler = Handler(Request, Response)
 
