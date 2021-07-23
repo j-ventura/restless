@@ -87,17 +87,17 @@ class TestAWS(TestCase):
             }
         )
 
-        self.assertEqual(
-            {
-                'authorizer': {'claims': None, 'scopes': None},
-                'body': {'a': 'B'},
-                'headers': {'header1': 'value1', 'header2': 'value2'},
-                'method': 'GET',
-                'path': '/my/path',
-                'query': {'parameter1': 'value1', 'parameter2': 'value'}
-            },
-            r.__dict__
-        )
+        for k, v in {
+            'authorizer': {'claims': None, 'scopes': None},
+            'body': {'a': 'B'},
+            'headers': {'header1': 'value1', 'header2': 'value2'},
+            'method': 'GET',
+            'path': '/my/path',
+            'query': {'parameter1': 'value1', 'parameter2': 'value'}
+        }.items():
+            self.assertEqual(
+                v, getattr(r, k)
+            )
 
     def test_binary_input(self):
         r = aws.Request(
@@ -182,17 +182,17 @@ class TestAWS(TestCase):
             }
         )
 
-        self.assertEqual(
-            {
-                'authorizer': {'claims': None, 'scopes': None},
-                'body': b'ABC',
-                'headers': {'header1': 'value1', 'header2': 'value2'},
-                'method': 'GET',
-                'path': '/my/path',
-                'query': {'parameter1': 'value1', 'parameter2': 'value'}
-            },
-            r.__dict__
-        )
+        for k, v in {
+            'authorizer': {'claims': None, 'scopes': None},
+            'body': b'ABC',
+            'headers': {'header1': 'value1', 'header2': 'value2'},
+            'method': 'GET',
+            'path': '/my/path',
+            'query': {'parameter1': 'value1', 'parameter2': 'value'}
+        }.items():
+            self.assertEqual(
+                v, getattr(r, k)
+            )
 
     def test_output(self):
         out = aws.Response('{"A":"B"}', 200)
@@ -246,16 +246,16 @@ class TestAzure(TestCase):
             )
         )
 
-        self.assertEqual(
-            {
-                'body': {'A': 'B'},
-                'headers': {'header1': 'value1', 'header2': 'value2'},
-                'method': 'GET',
-                'path': '/my/path',
-                'query': {'parameter1': 'value1', 'parameter2': 'value'}
-            },
-            r.__dict__
-        )
+        for k, v in {
+            'body': {'A': 'B'},
+            'headers': {'header1': 'value1', 'header2': 'value2'},
+            'method': 'GET',
+            'path': '/my/path',
+            'query': {'parameter1': 'value1', 'parameter2': 'value'}
+        }.items():
+            self.assertEqual(
+                v, getattr(r, k)
+            )
 
     def test_binary_input(self):
         r = azure.Request(
@@ -264,20 +264,21 @@ class TestAzure(TestCase):
                 method="get",
                 url="https://some_function/api/my/path",
                 headers={'header1': 'value1', 'header2': 'value2'},
-                params={'parameter1': 'value1', 'parameter2': 'value'}
+                params={'parameter1': 'value1', 'parameter2': 'value', 'code': 'a'}
             )
         )
 
-        self.assertEqual(
-            {
-                'body': b'ABC',
-                'headers': {'header1': 'value1', 'header2': 'value2'},
-                'method': 'GET',
-                'path': '/my/path',
-                'query': {'parameter1': 'value1', 'parameter2': 'value'}
-            },
-            r.__dict__
-        )
+        for k, v in {
+            'body': b'ABC',
+            'headers': {'header1': 'value1', 'header2': 'value2'},
+            'method': 'GET',
+            'path': '/my/path',
+            'query': {'parameter1': 'value1', 'parameter2': 'value', 'code': 'a'},
+            'authorizer': 'a'
+        }.items():
+            self.assertEqual(
+                v, getattr(r, k)
+            )
 
     def test_output(self):
         out = azure.Response(body='{"A":"B"}', status_code=200)

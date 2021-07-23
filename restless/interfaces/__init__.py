@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from abc import abstractmethod
 
 
 @dataclass
@@ -8,4 +9,11 @@ class BaseRequest:
     method: str
     headers: dict
     query: dict
-    authorizer: dict = None
+
+    def __init__(self, raw):
+        self._raw = raw
+
+    @property
+    @abstractmethod
+    def authorizer(self) -> dict:
+        return self._raw.get("requestContext", {}).get("authorizer")

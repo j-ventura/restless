@@ -7,7 +7,12 @@ from typing import Iterable
 
 
 class Request(BaseRequest):
+    @property
+    def authorizer(self) -> dict:
+        return self._raw.get("requestContext", {}).get("authorizer")
+
     def __init__(self, raw, use_camel_case=True):
+        super().__init__(raw)
         self.path = unquote_plus(raw.get("path") or raw.get("rawPath"))
 
         if raw.get('isBase64Encoded'):
@@ -18,7 +23,6 @@ class Request(BaseRequest):
         self.method = raw.get("httpMethod") or raw.get('requestContext', {}).get("http", {}).get("method")
         self.headers = raw.get("headers", {})
         self.query = raw.get("queryStringParameters") or {}
-        self.authorizer = raw.get("requestContext", {}).get("authorizer")
 
         if use_camel_case:
             for member in ['body', 'headers', 'query']:

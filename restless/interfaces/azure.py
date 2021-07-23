@@ -17,7 +17,12 @@ def to_camel(body: [str, bytes]):
 class Request(BaseRequest):
     BASE_PATH_RE = re.compile('https://.*/api')
 
+    @property
+    def authorizer(self) -> dict:
+        return self._raw.params.get('code')
+
     def __init__(self, req: HttpRequest, use_camel_case=False):
+        super().__init__(req)
         self.method = req.method
         self.headers = dict(**req.headers)
         self.query = dict(**req.params)
