@@ -170,27 +170,27 @@ class Handler:
         except ValidationError as e:
             return self.Response(
                 {"error": "Validation Error", "details": e.errors()},
-                400,
+                status_code=400,
                 use_camel_case=self.use_camel_case
             )
 
         except Unauthorized as e:
             return self.Response(
                 {"error": e.args[0]},
-                401,
+                status_code=401,
                 use_camel_case=self.use_camel_case
             )
 
         except Forbidden as e:
             return self.Response(
                 {"error": e.args[0]},
-                403,
+                status_code=403,
                 use_camel_case=self.use_camel_case
             )
 
         except Missing as e:
             return self.Response(
                 {"error": e.args[0]},
-                404,
+                status_code=404,
                 use_camel_case=self.use_camel_case
             )
