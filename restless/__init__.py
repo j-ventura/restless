@@ -162,7 +162,7 @@ class Handler:
             if e.args and 'missing' in e.args[0]:
                 return self.Response(
                     {"error": str(e)},
-                    400,
+                    status_code=400,
                     use_camel_case=self.use_camel_case
                 )
             raise e
