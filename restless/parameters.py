@@ -32,3 +32,7 @@ class BinaryParameter(bytes):
 
 class BodyParameter(BaseModel):
     pass
+
+
+class AuthorizerParameter(dict):
+    pass

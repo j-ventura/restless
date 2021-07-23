@@ -2,7 +2,7 @@ from unittest import TestCase
 from restless import Handler
 from restless.interfaces.aws import Response, Request
 from restless.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
-    BinaryParameter, BodyParameter
+    BinaryParameter, BodyParameter, AuthorizerParameter
 from restless.errors import Forbidden, Unauthorized, Missing
 import requests
 from base64 import b64encode
@@ -12,6 +12,39 @@ from typing import List, Optional
 
 
 class TestHandler(TestCase):
+    def testAuthorizer(self):
+        handler = Handler(Request, Response)
+
+        class Object(BodyParameter):
+            id: str
+            auth_a: str
+
+        @handler.handle('post', '/some/generator')
+        def get_generator(auth: AuthorizerParameter, parameter: QueryParameter = "1") -> {200: Object}:
+            return Object(id=parameter, auth_a=auth['A'])
+
+        out = handler(
+            {
+                "path": "/some/generator",
+                "httpMethod": 'post',
+                'requestContext': {
+                    'authorizer': {
+                        'A': 'B'
+                    }
+                }
+            }
+        )
+
+        self.assertEqual(
+            {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'isBase64Encoded': False,
+                'body': '{"id": "1", "auth_a": "B"}'
+            },
+            out
+        )
+
     def testObjectReponse(self):
         handler = Handler(Request, Response)
 

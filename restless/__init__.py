@@ -4,7 +4,7 @@ from typing import Callable, ClassVar, Iterable, List
 from inspect import signature
 from restless.interfaces import BaseRequest
 from restless.util import FormData
-from restless.parameters import BinaryParameter, BodyParameter
+from restless.parameters import BinaryParameter, BodyParameter, AuthorizerParameter
 from restless.errors import Forbidden, Unauthorized, Missing
 from pydantic.error_wrappers import ValidationError
 from restless.security import Security
@@ -57,6 +57,8 @@ class PathHandler:
                 method_params[param] = params.get('body')
             elif issubclass(type_, BodyParameter):
                 method_params[param] = type_(**req.body)
+            elif issubclass(type_, AuthorizerParameter):
+                method_params[param] = req.authorizer
 
         result = self.method(**method_params)
 
