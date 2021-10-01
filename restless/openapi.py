@@ -244,9 +244,9 @@ def make_spec(
                             'format': 'binary'
                         }
 
-    data_format = data_format or file_name.split('.')[0]
+    data_format = data_format or file_name.split('.')[1]
 
-    if data_format == 'yml':
+    if data_format in {'yml', 'yaml'}:
         data = yaml.dump(spec)
     elif data_format == 'json':
         data = json.dumps(spec)
