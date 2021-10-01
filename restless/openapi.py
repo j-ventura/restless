@@ -1,3 +1,5 @@
+import json
+
 import yaml
 from restless import Handler
 from datetime import datetime
@@ -55,7 +57,8 @@ def make_spec(
         file_name='spec.yaml',
         servers=None,
         security: List[Security] = None,
-        default_security: List[Union[List[str], str]] = None
+        default_security: List[Union[List[str], str]] = None,
+        data_format=None
 ):
     spec = {
         'openapi': OPENAPI,
@@ -241,5 +244,17 @@ def make_spec(
                             'format': 'binary'
                         }
 
-    with open(file_name, 'w') as dst:
-        yaml.dump(spec, dst)
+    data_format = data_format or file_name.split('.')[0]
+
+    if data_format == 'yml':
+        data = yaml.dump(spec)
+    elif data_format == 'json':
+        data = json.dumps(spec)
+    else:
+        raise Exception("Bad Format")
+
+    if file_name:
+        with open(file_name, 'w') as dst:
+            dst.write(data)
+    else:
+        return data
