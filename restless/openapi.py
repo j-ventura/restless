@@ -64,7 +64,7 @@ def make_spec(
         servers=None,
         security: List[Security] = None,
         default_security: List[Union[List[str], str]] = None,
-        data_format=None
+        data_format: Formats = None
 ):
     spec = {
         'openapi': OPENAPI,
@@ -204,7 +204,7 @@ def make_spec(
                 }
 
                 if getattr(model, 'ENUM', None):
-                    param_spec['schema']['enum'] = [k for k in model.ENUM.__members__]
+                    param_spec['schema']['enum'] = model.enum_keys()
 
                 target['parameters'].append(param_spec)
             else:
@@ -253,11 +253,11 @@ def make_spec(
                             'format': 'binary'
                         }
 
-    data_format = data_format or file_name.split('.')[1]
+    data_format = data_format or Formats.__getitem__(file_name.split('.')[1])
 
-    if data_format in {'yml', 'yaml'}:
+    if data_format == Formats.yaml:
         data = yaml.dump(spec)
-    elif data_format == 'json':
+    elif data_format == Formats.json:
         data = json.dumps(spec)
     else:
         raise Exception("Bad Format")

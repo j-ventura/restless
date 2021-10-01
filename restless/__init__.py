@@ -5,7 +5,7 @@ from inspect import signature
 from restless.interfaces import BaseRequest
 from restless.util import FormData
 from restless.parameters import BinaryParameter, BodyParameter, AuthorizerParameter
-from restless.errors import Forbidden, Unauthorized, Missing
+from restless.errors import Forbidden, Unauthorized, Missing, BadRequest
 from pydantic.error_wrappers import ValidationError
 from restless.security import Security
 from pydantic import BaseModel
@@ -49,8 +49,19 @@ class PathHandler:
             if param not in self.parameters:
                 continue
             else:
-                method_params[param] = value if isinstance(value, FormData.File) else self.parameters[param](
-                    value)
+                if getattr(self.parameters[param], 'ENUM', None):
+                    if not re.match(r'[a-zA-Z_].*', value):
+                        value = "_" + value
+
+                    if value in self.parameters[param].ENUM.__members__:
+                        method_params[param] = self.parameters[param].ENUM.__members__[value]
+                    else:
+                        raise BadRequest(
+                            f"The value for {param} must be one of {self.parameters[param].enum_keys()}"
+                        )
+                else:
+                    method_params[param] = value if isinstance(value, FormData.File) else self.parameters[param](
+                        value)
 
         for param, type_ in self.parameters.items():
             if type_ == BinaryParameter:
@@ -192,5 +203,12 @@ class Handler:
             return self.Response(
                 {"error": e.args[0]},
                 status_code=404,
+                use_camel_case=self.use_camel_case
+            )
+
+        except BadRequest as e:
+            return self.Response(
+                {"error": e.args[0]},
+                status_code=400,
                 use_camel_case=self.use_camel_case
             )

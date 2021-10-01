@@ -8,3 +8,7 @@ class Unauthorized(Exception):
 
 class Missing(Exception):
     pass
+
+
+class BadRequest(Exception):
+    pass
