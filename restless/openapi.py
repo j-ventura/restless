@@ -1,5 +1,4 @@
 import json
-
 import yaml
 from restless import Handler
 from datetime import datetime
@@ -9,6 +8,13 @@ from restless.parameters import BinaryParameter
 from restless.security import Security
 from typing import List, Union
 from restless.util import snake_to_camel
+from enum import Enum
+
+
+class Formats(Enum):
+    yaml = 'yaml'
+    json = 'json'
+
 
 OPENAPI = "3.0.0"
 
@@ -196,6 +202,9 @@ def make_spec(
                         'type': 'string'
                     }
                 }
+
+                if getattr(model, 'ENUM', None):
+                    param_spec['schema']['enum'] = [k for k in model.ENUM.__members__]
 
                 target['parameters'].append(param_spec)
             else:

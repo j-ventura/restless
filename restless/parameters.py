@@ -1,9 +1,15 @@
 from restless.util import FormData
 from pydantic import BaseModel
+from enum import Enum
+from typing import ClassVar
 
 
 class StringParameter(str):
-    pass
+    ENUM = None
+
+    @classmethod
+    def enum(cls, enum: Enum) -> ClassVar:
+        return type(cls.__name__, (cls,), {'ENUM': enum})
 
 
 class PathParameter(StringParameter):

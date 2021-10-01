@@ -86,7 +86,9 @@ class TestRouter(TestCase):
                                                                              'in': 'path',
                                                                              'name': 'extension',
                                                                              'required': True,
-                                                                             'schema': {'type': 'string'}}],
+                                                                             'schema': {'enum': ['yaml',
+                                                                                                 'json'],
+                                                                                        'type': 'string'}}],
                                                              'responses': {'200': {'content': {
                                                                  'application/json': {'schema': {'type': 'string'}}},
                                                                  'description': 'meh'},
@@ -110,6 +112,7 @@ class TestRouter(TestCase):
                                                                                     'Found'}},
                                                              'tags': ['spec']}}},
              'servers': [],
-             'tags': []},
+             'tags': []}
+            ,
             yaml.load(out.data, Loader=yaml.SafeLoader)
         )

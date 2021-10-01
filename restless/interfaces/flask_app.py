@@ -1,6 +1,6 @@
 from restless import Handler
 from restless.util import camel_to_snake, snake_to_camel
-from restless.openapi import make_spec
+from restless.openapi import make_spec, Formats
 import json
 from urllib.parse import unquote_plus
 from flask import Response as FResponse
@@ -85,7 +85,7 @@ class FlaskHandler(Handler):
         app = Flask(__name__)
 
         @self.handle("get", "/spec/swagger.<extension>")
-        def spec(extension: PathParameter) -> {200: str}:
+        def spec(extension: PathParameter.enum(Formats)) -> {200: str}:
             return make_spec(
                 self.name,
                 self.description,
