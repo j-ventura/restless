@@ -8,6 +8,7 @@ from flask import Flask, request
 import os
 from werkzeug.exceptions import BadRequest
 from pydantic import BaseModel
+from restless.parameters import PathParameter
 
 THIS_FOLDER = os.path.dirname(__file__)
 
@@ -83,8 +84,8 @@ class FlaskHandler(Handler):
 
         app = Flask(__name__)
 
-        @app.route('/spec/swagger.json')
-        def spec():
+        @self.handle("get", "/spec/<filename>")
+        def spec(filename: PathParameter) -> {200: str}:
             return make_spec(
                 self.name,
                 self.description,
@@ -93,7 +94,7 @@ class FlaskHandler(Handler):
                 security=self.security,
                 default_security=self.default_security,
                 file_name=None,
-                data_format=self.DATA_FORMAT
+                data_format=filename.split('.')[1]
             )
 
         @app.route('/', defaults={'path': ''})
