@@ -99,7 +99,7 @@ class Handler:
         target = self.handlers[len(tokens)]
 
         for token in tokens:
-            if self.REGEX.match(token):
+            if self.REGEX.search(token):
                 path_expressions.append(
                     self.REGEX.sub('(?P\\1[^/]+)', token)
                 )

@@ -84,8 +84,8 @@ class FlaskHandler(Handler):
 
         app = Flask(__name__)
 
-        @self.handle("get", "/spec/<filename>")
-        def spec(filename: PathParameter) -> {200: str}:
+        @self.handle("get", "/spec/swagger.<extension>")
+        def spec(extension: PathParameter) -> {200: str}:
             return make_spec(
                 self.name,
                 self.description,
@@ -94,7 +94,7 @@ class FlaskHandler(Handler):
                 security=self.security,
                 default_security=self.default_security,
                 file_name=None,
-                data_format=filename.split('.')[1]
+                data_format=extension
             )
 
         @app.route('/', defaults={'path': ''})

@@ -67,20 +67,48 @@ class TestRouter(TestCase):
                                      'parameters': [],
                                      'responses': {'200': {'content': {
                                          'application/json': {'schema': {'$ref': '#/components/schemas/Message'}}},
-                                                           'description': 'meh'},
-                                                   '400': {'content': {'application/json': {
-                                                       'schema': {'$ref': '#/components/schemas/Error'}}},
-                                                           'description': 'Bad Request'},
-                                                   '401': {'content': {'application/json': {
-                                                       'schema': {'$ref': '#/components/schemas/Error'}}},
-                                                           'description': 'Unauthorized'},
-                                                   '403': {'content': {'application/json': {
-                                                       'schema': {'$ref': '#/components/schemas/Error'}}},
-                                                           'description': 'Forbidden'},
-                                                   '404': {'content': {'application/json': {
-                                                       'schema': {'$ref': '#/components/schemas/Error'}}},
-                                                           'description': 'Not Found'}},
-                                     'tags': ['']}}},
+                                         'description': 'meh'},
+                                         '400': {'content': {'application/json': {
+                                             'schema': {'$ref': '#/components/schemas/Error'}}},
+                                             'description': 'Bad Request'},
+                                         '401': {'content': {'application/json': {
+                                             'schema': {'$ref': '#/components/schemas/Error'}}},
+                                             'description': 'Unauthorized'},
+                                         '403': {'content': {'application/json': {
+                                             'schema': {'$ref': '#/components/schemas/Error'}}},
+                                             'description': 'Forbidden'},
+                                         '404': {'content': {'application/json': {
+                                             'schema': {'$ref': '#/components/schemas/Error'}}},
+                                             'description': 'Not Found'}},
+                                     'tags': ['']}},
+                       '/spec/swagger.{extension}': {'get': {'description': 'spec',
+                                                             'parameters': [{'description': 'extension',
+                                                                             'in': 'path',
+                                                                             'name': 'extension',
+                                                                             'required': True,
+                                                                             'schema': {'type': 'string'}}],
+                                                             'responses': {'200': {'content': {
+                                                                 'application/json': {'schema': {'type': 'string'}}},
+                                                                 'description': 'meh'},
+                                                                 '400': {'content': {'application/json': {
+                                                                     'schema': {
+                                                                         '$ref': '#/components/schemas/Error'}}},
+                                                                     'description': 'Bad '
+                                                                                    'Request'},
+                                                                 '401': {'content': {'application/json': {
+                                                                     'schema': {
+                                                                         '$ref': '#/components/schemas/Error'}}},
+                                                                     'description': 'Unauthorized'},
+                                                                 '403': {'content': {'application/json': {
+                                                                     'schema': {
+                                                                         '$ref': '#/components/schemas/Error'}}},
+                                                                     'description': 'Forbidden'},
+                                                                 '404': {'content': {'application/json': {
+                                                                     'schema': {
+                                                                         '$ref': '#/components/schemas/Error'}}},
+                                                                     'description': 'Not '
+                                                                                    'Found'}},
+                                                             'tags': ['spec']}}},
              'servers': [],
              'tags': []},
             yaml.load(out.data, Loader=yaml.SafeLoader)
