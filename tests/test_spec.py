@@ -55,12 +55,12 @@ class TestSpec(TestCase):
             """Path Parameters"""
             return {"parameter_value": parameter}
 
-        @handler.handle('post', '/some/binary', security=None)
+        @handler.handle('post', '/some/binary', security=False)
         def post_binary(parameter: BinaryParameter) -> {200: dict}:
             """Binary Parameter"""
             return {"parameter_value": parameter.decode()}
 
-        @handler.handle('post', '/some/header', security=None)
+        @handler.handle('post', '/some/header', security=False)
         def post_binary(parameter: HeaderParameter) -> {200: dict}:
             """Header Parameter"""
             return {"parameter_value": parameter}

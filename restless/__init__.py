@@ -104,7 +104,7 @@ class Handler:
         self.Response = response
         self.use_camel_case = use_camel_case
 
-    def handle(self, method: str, path: str, tags=None, security=[]) -> Callable:
+    def handle(self, method: str, path: str, tags=None, security=None) -> Callable:
         tokens = path.split('/')[1:]
         path_expressions = []
         target = self.handlers[len(tokens)]

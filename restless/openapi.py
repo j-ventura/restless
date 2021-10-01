@@ -119,10 +119,14 @@ def make_spec(
 
         target = target[handler.http_method]
 
-        if handler.security is not None:
-            if handler.security:
-                target['security'] = make_security(handler.security, spec)
-        else:
+        if handler.security is None:  # default = None
+            # Uses the default security
+            pass
+        elif handler.security:
+            # uses specific security
+            target['security'] = make_security(handler.security, spec)
+        else:  # security=False
+            # unsecured
             target['security'] = []
 
         target['description'] = handler.method.__doc__ or handler.method.__name__
