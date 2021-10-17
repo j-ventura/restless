@@ -5,7 +5,7 @@ from inspect import signature
 from restless.interfaces import BaseRequest
 from restless.util import FormData
 from restless.parameters import BinaryParameter, BodyParameter, AuthorizerParameter
-from restless.errors import Forbidden, Unauthorized, Missing
+from restless.errors import Forbidden, Unauthorized, Missing, BadRequest
 from pydantic.error_wrappers import ValidationError
 from restless.security import Security
 from pydantic import BaseModel
@@ -49,8 +49,19 @@ class PathHandler:
             if param not in self.parameters:
                 continue
             else:
-                method_params[param] = value if isinstance(value, FormData.File) else self.parameters[param](
-                    value)
+                if getattr(self.parameters[param], 'ENUM', None):
+                    if not re.match(r'[a-zA-Z_].*', value):
+                        value = "_" + value
+
+                    if value in self.parameters[param].ENUM.__members__:
+                        method_params[param] = self.parameters[param].ENUM.__members__[value]
+                    else:
+                        raise BadRequest(
+                            f"The value for {param} must be one of {self.parameters[param].enum_keys()}"
+                        )
+                else:
+                    method_params[param] = value if isinstance(value, FormData.File) else self.parameters[param](
+                        value)
 
         for param, type_ in self.parameters.items():
             if type_ == BinaryParameter:
@@ -93,13 +104,13 @@ class Handler:
         self.Response = response
         self.use_camel_case = use_camel_case
 
-    def handle(self, method: str, path: str, tags=None, security=[]) -> Callable:
+    def handle(self, method: str, path: str, tags=None, security=None) -> Callable:
         tokens = path.split('/')[1:]
         path_expressions = []
         target = self.handlers[len(tokens)]
 
         for token in tokens:
-            if self.REGEX.match(token):
+            if self.REGEX.search(token):
                 path_expressions.append(
                     self.REGEX.sub('(?P\\1[^/]+)', token)
                 )
@@ -132,11 +143,10 @@ class Handler:
         target = self.handlers[len(tokens)]
 
         for token in tokens:
-            if '' in target:
-                target = target['']
-
-            elif token in target:
+            if token in target:
                 target = target[token]
+            elif '' in target:
+                target = target['']
 
         try:
             return target[req.method.upper()]
@@ -192,5 +202,12 @@ class Handler:
             return self.Response(
                 {"error": e.args[0]},
                 status_code=404,
+                use_camel_case=self.use_camel_case
+            )
+
+        except BadRequest as e:
+            return self.Response(
+                {"error": e.args[0]},
+                status_code=400,
                 use_camel_case=self.use_camel_case
             )

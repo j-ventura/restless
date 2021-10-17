@@ -9,6 +9,7 @@ from base64 import b64encode
 import json
 from datetime import datetime
 from typing import List, Optional
+from enum import Enum
 
 
 class TestHandler(TestCase):
@@ -135,6 +136,62 @@ class TestHandler(TestCase):
                 "httpMethod": 'get'
             }
         )
+
+    def testEnum(self):
+        handler = Handler(Request, Response)
+
+        class Possible(Enum):
+            _1 = 1
+            _2 = 2
+
+        @handler.handle('get', '/some/generator')
+        def get_stuff(parameter: QueryParameter.enum(Possible)) -> {200: dict}:
+            return {"parameter_value": parameter.value}
+
+        with self.subTest('OK'):
+            out = handler(
+                {
+                    "path": "/some/generator",
+                    "httpMethod": 'get',
+                    "queryStringParameters": {
+                        "parameter": "1"
+                    }
+                }
+            )
+
+            self.assertEqual(
+                {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json'},
+                    'isBase64Encoded': False,
+                    'body': '{"parameter_value": 1}'
+                },
+                out
+            )
+
+        with self.subTest('Bad'):
+            out = handler(
+                {
+                    "path": "/some/generator",
+                    "httpMethod": 'get',
+                    "queryStringParameters": {
+                        "parameter": "13"
+                    }
+                }
+            )
+
+            print(out)
+
+            self.assertEqual(
+                {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json'},
+                    'isBase64Encoded': False,
+                    'body': '{"error": "The value for parameter must be one of [\'1\', \'2\']"}'
+                },
+                out
+            )
+
 
     def testReturnGenerator(self):
         handler = Handler(Request, Response)
@@ -310,13 +367,23 @@ class TestHandler(TestCase):
             raise Unauthorized("Unauthorized")
 
         @handler.handle('get', '/some/Missing')
-        def unauthorized(parameter: QueryParameter) -> {200: dict}:
+        def missing(parameter: QueryParameter) -> {200: dict}:
             raise Missing("Missing")
 
-        for endpoint, status_code in [
-            ('Forbidden', 403),
-            ('Unauthorized', 401),
-            ('Missing', 404)
+        from enum import IntEnum
+
+        class Possible(IntEnum):
+            _2 = 2
+
+        @handler.handle('get', '/some/BadRequest')
+        def badrequest(parameter: QueryParameter.enum(Possible)) -> {200: dict}:
+            return {'result': 'ok'}
+
+        for endpoint, status_code, error in [
+            ('Forbidden', 403, None),
+            ('Unauthorized', 401, None),
+            ('Missing', 404, None),
+            ('BadRequest', 400, '{"error": "The value for parameter must be one of [\'2\']"}')
         ]:
             with self.subTest(endpoint):
                 out = handler(
@@ -334,7 +401,7 @@ class TestHandler(TestCase):
                         'statusCode': status_code,
                         'headers': {'Content-Type': 'application/json'},
                         'isBase64Encoded': False,
-                        'body': f'{{"error": "{endpoint}"}}'
+                        'body': error or f'{{"error": "{endpoint}"}}'
                     },
                     out
                 )

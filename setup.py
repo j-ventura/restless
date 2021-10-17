@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 extras = {
     'azure': ['azure-functions'],
     'tests': ['requests', 'deepdiff'],
-    'spec': ['pyyaml']
+    'spec': ['pyyaml'],
+    'flask': ['flask']
 }
 
 all_deps = set()
@@ -14,7 +15,7 @@ for deps in extras.values():
 
 setup(
     name='restless-cloud',
-    version='0.0.8',
+    version='0.1.0',
     author="Joaquim Ventura",
     author_email="allaphor@gmail.com",
     description='A router for AWS Lambda and Azure Functions',

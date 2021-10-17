@@ -1,3 +1,4 @@
+import json
 import yaml
 from restless import Handler
 from datetime import datetime
@@ -7,6 +8,13 @@ from restless.parameters import BinaryParameter
 from restless.security import Security
 from typing import List, Union
 from restless.util import snake_to_camel
+from enum import Enum
+
+
+class Formats(Enum):
+    yaml = 'yaml'
+    json = 'json'
+
 
 OPENAPI = "3.0.0"
 
@@ -55,7 +63,8 @@ def make_spec(
         file_name='spec.yaml',
         servers=None,
         security: List[Security] = None,
-        default_security: List[Union[List[str], str]] = None
+        default_security: List[Union[List[str], str]] = None,
+        data_format: Formats = None
 ):
     spec = {
         'openapi': OPENAPI,
@@ -110,10 +119,14 @@ def make_spec(
 
         target = target[handler.http_method]
 
-        if handler.security is not None:
-            if handler.security:
-                target['security'] = make_security(handler.security, spec)
-        else:
+        if handler.security is None:  # default = None
+            # Uses the default security
+            pass
+        elif handler.security:
+            # uses specific security
+            target['security'] = make_security(handler.security, spec)
+        else:  # security=False
+            # unsecured
             target['security'] = []
 
         target['description'] = handler.method.__doc__ or handler.method.__name__
@@ -194,6 +207,9 @@ def make_spec(
                     }
                 }
 
+                if getattr(model, 'ENUM', None):
+                    param_spec['schema']['enum'] = model.enum_keys()
+
                 target['parameters'].append(param_spec)
             else:
                 if 'requestBody' not in target:
@@ -241,5 +257,17 @@ def make_spec(
                             'format': 'binary'
                         }
 
-    with open(file_name, 'w') as dst:
-        yaml.dump(spec, dst)
+    data_format = data_format or Formats.__getitem__(file_name.split('.')[1])
+
+    if data_format == Formats.yaml:
+        data = yaml.dump(spec)
+    elif data_format == Formats.json:
+        data = json.dumps(spec)
+    else:
+        raise Exception("Bad Format")
+
+    if file_name:
+        with open(file_name, 'w') as dst:
+            dst.write(data)
+    else:
+        return data
