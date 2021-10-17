@@ -143,11 +143,10 @@ class Handler:
         target = self.handlers[len(tokens)]
 
         for token in tokens:
-            if '' in target:
-                target = target['']
-
-            elif token in target:
+            if token in target:
                 target = target[token]
+            elif '' in target:
+                target = target['']
 
         try:
             return target[req.method.upper()]
