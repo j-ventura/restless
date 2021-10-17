@@ -17,6 +17,10 @@ class Request:
     IN = "body"
     TYPE = dict
 
+    @property
+    def authorizer(self) -> dict:
+        return dict(token=self.headers.get("Authorization", ''))
+
     def __init__(self, value, use_camel_case=True):
         self.path = unquote_plus(value.full_path.strip('?'))
 
@@ -69,7 +73,10 @@ class Response(FResponse):
 class FlaskHandler(Handler):
     DATA_FORMAT = 'yml'
 
-    def __init__(self, name, description, version, security=None, default_security=None, camel_case_interface=True):
+    def __init__(
+            self, name, description, version, security=None, default_security=None, camel_case_interface=True,
+            request_class=Request, response_class=Response
+    ):
         self.security = security or []
         self.default_security = default_security or []
         self.name = name
@@ -77,7 +84,7 @@ class FlaskHandler(Handler):
         self.version = version
 
         super().__init__(
-            request=Request, response=Response, use_camel_case=camel_case_interface
+            request=request_class, response=response_class, use_camel_case=camel_case_interface
         )
 
         self.schemes = ["http", "https"]
