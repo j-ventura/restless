@@ -5,6 +5,7 @@ import re
 from urllib.parse import unquote_plus
 from restless.interfaces import BaseRequest
 from typing import Iterable
+from restless import Handler
 
 
 def to_camel(body: [str, bytes]):
@@ -71,3 +72,8 @@ class Response(HttpResponse):
             'headers': dict(self.headers),
             'body': self.get_body().decode('utf-8')
         }
+
+
+class FunctionHandler(Handler):
+    REQUEST = Request
+    RESPONSE = Response

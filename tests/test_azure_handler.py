@@ -1,13 +1,12 @@
 from unittest import TestCase
-from restless import Handler
-from restless.interfaces.azure import Response, Request
+from restless.interfaces.azure import FunctionHandler
 from restless.parameters import QueryParameter
 from azure.functions import HttpRequest
 
 
 class TestHandler(TestCase):
     def testHeaders(self):
-        handler = Handler(Request, Response)
+        handler = FunctionHandler()
 
         @handler.handle('post', '/some/generator')
         def get_generator(parameter: QueryParameter = "1") -> {200: dict}:

@@ -1,6 +1,5 @@
 from unittest import TestCase
-from restless import Handler
-from restless.interfaces.aws import Response, Request
+from restless.interfaces.aws import LambdaHandler
 from restless.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
     BinaryParameter, BodyParameter, AuthorizerParameter
 from restless.errors import Forbidden, Unauthorized, Missing
@@ -14,7 +13,7 @@ from enum import Enum
 
 class TestHandler(TestCase):
     def testAuthorizer(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         class Object(BodyParameter):
             id: str
@@ -47,7 +46,7 @@ class TestHandler(TestCase):
         )
 
     def testObjectReponse(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         class Object(BodyParameter):
             id: int
@@ -74,7 +73,7 @@ class TestHandler(TestCase):
         )
 
     def testHeaders(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('post', '/some/generator')
         def get_generator(parameter: QueryParameter = "1") -> {200: dict}:
@@ -98,7 +97,7 @@ class TestHandler(TestCase):
         )
 
     def testStatusCode(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('post', '/some/generator')
         def get_generator(parameter: QueryParameter = "1") -> {201: dict}:
@@ -122,7 +121,7 @@ class TestHandler(TestCase):
         )
 
     def testUnknownOutput(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/generator')
         def get_generator(parameter: QueryParameter = "1") -> {200: dict}:
@@ -138,7 +137,7 @@ class TestHandler(TestCase):
         )
 
     def testEnum(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         class Possible(Enum):
             _1 = 1
@@ -194,7 +193,7 @@ class TestHandler(TestCase):
 
 
     def testReturnGenerator(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/generator')
         def get_generator(parameter: QueryParameter = "1") -> {200: [dict]}:
@@ -219,7 +218,7 @@ class TestHandler(TestCase):
         )
 
     def testBodyParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         class User(BodyParameter):
             id: int
@@ -271,7 +270,7 @@ class TestHandler(TestCase):
             )
 
     def testBodyParameterCamel(self):
-        handler = Handler(Request, Response, use_camel_case=True)
+        handler = LambdaHandler(use_camel_case=True)
 
         class User(BodyParameter):
             id: int
@@ -309,7 +308,7 @@ class TestHandler(TestCase):
             )
 
     def testOptionalParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/optional')
         def get_basic(parameter: QueryParameter = "1") -> {200: dict}:
@@ -356,7 +355,7 @@ class TestHandler(TestCase):
             )
 
     def testExceptions(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/Forbidden')
         def forbidden(parameter: QueryParameter) -> {200: dict}:
@@ -407,7 +406,7 @@ class TestHandler(TestCase):
                 )
 
     def testBinaryParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('post', '/some/path')
         def get_basic(parameter: BinaryParameter) -> {200: dict}:
@@ -433,7 +432,7 @@ class TestHandler(TestCase):
         )
 
     def testFormsParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('post', '/some/path')
         def get_basic(file: FormFile, form_parameter: FormParameter) -> {200: dict}:
@@ -472,7 +471,7 @@ class TestHandler(TestCase):
         )
 
     def testHeaderParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/path')
         def get_basic(parameter: HeaderParameter) -> {200: dict}:
@@ -499,7 +498,7 @@ class TestHandler(TestCase):
         )
 
     def testQueryParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/path')
         def get_basic(parameter: QueryParameter) -> {200: dict}:
@@ -526,7 +525,7 @@ class TestHandler(TestCase):
         )
 
     def testQueryParameterCamel(self):
-        handler = Handler(Request, Response, use_camel_case=True)
+        handler = LambdaHandler(use_camel_case=True)
 
         @handler.handle('get', '/some/path')
         def get_basic(the_parameter: QueryParameter) -> {200: dict}:
@@ -553,7 +552,7 @@ class TestHandler(TestCase):
         )
 
     def testPathParameter(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/path/<parameter>')
         def get_basic(parameter: PathParameter) -> {200: dict}:
@@ -577,7 +576,7 @@ class TestHandler(TestCase):
         )
 
     def testNotFound(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('get', '/some/other/path/<parameter>')
         def get_basic(parameter) -> {200: dict}:
@@ -601,7 +600,7 @@ class TestHandler(TestCase):
         )
 
     def testOverlapping(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         paths = [
             '/some/other/path/<parameter>',

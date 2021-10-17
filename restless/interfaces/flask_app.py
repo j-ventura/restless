@@ -72,10 +72,11 @@ class Response(FResponse):
 
 class FlaskHandler(Handler):
     DATA_FORMAT = 'yml'
+    REQUEST = Request
+    RESPONSE = Response
 
     def __init__(
-            self, name, description, version, security=None, default_security=None, camel_case_interface=True,
-            request_class=Request, response_class=Response
+            self, name, description, version, security=None, default_security=None, camel_case_interface=True
     ):
         self.security = security or []
         self.default_security = default_security or []
@@ -83,9 +84,7 @@ class FlaskHandler(Handler):
         self.description = description
         self.version = version
 
-        super().__init__(
-            request=request_class, response=response_class, use_camel_case=camel_case_interface
-        )
+        super().__init__(use_camel_case=camel_case_interface)
 
         self.schemes = ["http", "https"]
 

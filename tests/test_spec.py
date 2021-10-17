@@ -1,6 +1,6 @@
 from unittest import TestCase
 from restless import Handler
-from restless.interfaces.aws import Response, Request
+from restless.interfaces.aws import LambdaHandler
 from restless.parameters import PathParameter, QueryParameter, HeaderParameter, FormFile, FormParameter, \
     BinaryParameter, BodyParameter
 from datetime import datetime
@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(__file__))
 
 class TestSpec(TestCase):
     def testAWS(self):
-        handler = Handler(Request, Response)
+        handler = LambdaHandler()
 
         @handler.handle('post', '/some/query')
         def get_query(parameter: QueryParameter = "1") -> {201: dict}:

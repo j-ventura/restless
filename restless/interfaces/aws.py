@@ -4,6 +4,7 @@ import json
 from urllib.parse import unquote_plus
 from base64 import b64decode, b64encode
 from typing import Iterable
+from restless import Handler
 
 
 class Request(BaseRequest):
@@ -56,3 +57,8 @@ class Response(dict):
                 self["body"] = json.dumps(body_, cls=UniversalEncoder)
         else:
             raise Exception("Unsupported")
+
+
+class LambdaHandler(Handler):
+    REQUEST = Request
+    RESPONSE = Response

@@ -98,10 +98,11 @@ class PathHandler:
 class Handler:
     REGEX = re.compile(r'(<[^/]+?>)')
 
-    def __init__(self, request: ClassVar, response: ClassVar, use_camel_case=False):
+    REQUEST: ClassVar = None
+    RESPONSE: ClassVar = None
+
+    def __init__(self, use_camel_case=False):
         self.handlers = defaultdict(dict)
-        self.Request = request
-        self.Response = response
         self.use_camel_case = use_camel_case
 
     def handle(self, method: str, path: str, tags=None, security=None) -> Callable:
@@ -154,14 +155,14 @@ class Handler:
             raise Missing(f"Missing '{req.method}' on '{req.path}'")
 
     def __call__(self, event):
-        req = self.Request(event, use_camel_case=self.use_camel_case)
+        req = self.REQUEST(event, use_camel_case=self.use_camel_case)
 
         try:
             path_handler = self.select_handler(req)
 
             body, status, headers = path_handler.process_request(req)
 
-            return self.Response(
+            return self.RESPONSE(
                 body=body,
                 status_code=status,
                 headers=headers,
@@ -170,7 +171,7 @@ class Handler:
 
         except (TypeError, AssertionError) as e:
             if e.args and 'missing' in e.args[0]:
-                return self.Response(
+                return self.RESPONSE(
                     {"error": str(e)},
                     status_code=400,
                     use_camel_case=self.use_camel_case
@@ -178,35 +179,35 @@ class Handler:
             raise e
 
         except ValidationError as e:
-            return self.Response(
+            return self.RESPONSE(
                 {"error": "Validation Error", "details": e.errors()},
                 status_code=400,
                 use_camel_case=self.use_camel_case
             )
 
         except Unauthorized as e:
-            return self.Response(
+            return self.RESPONSE(
                 {"error": e.args[0]},
                 status_code=401,
                 use_camel_case=self.use_camel_case
             )
 
         except Forbidden as e:
-            return self.Response(
+            return self.RESPONSE(
                 {"error": e.args[0]},
                 status_code=403,
                 use_camel_case=self.use_camel_case
             )
 
         except Missing as e:
-            return self.Response(
+            return self.RESPONSE(
                 {"error": e.args[0]},
                 status_code=404,
                 use_camel_case=self.use_camel_case
             )
 
         except BadRequest as e:
-            return self.Response(
+            return self.RESPONSE(
                 {"error": e.args[0]},
                 status_code=400,
                 use_camel_case=self.use_camel_case
