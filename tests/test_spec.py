@@ -81,8 +81,8 @@ class TestSpec(TestCase):
 
             with open('spec.yaml') as fixture, open('new_aws.yaml') as test:
                 difference = DeepDiff(
-                    yaml.load(fixture),
-                    yaml.load(test)
+                    yaml.load(fixture, Loader=yaml.SafeLoader),
+                    yaml.load(test, Loader=yaml.SafeLoader)
                 )
 
             self.assertEqual(
@@ -109,8 +109,8 @@ class TestSpec(TestCase):
 
             with open('camel_spec.yaml') as fixture, open('new_aws.yaml') as test:
                 difference = DeepDiff(
-                    yaml.load(fixture),
-                    yaml.load(test)
+                    yaml.load(fixture, Loader=yaml.SafeLoader),
+                    yaml.load(test, Loader=yaml.SafeLoader)
                 )
 
             self.assertEqual(
