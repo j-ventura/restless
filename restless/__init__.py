@@ -37,7 +37,7 @@ class PathHandler:
         if req.query:
             params.update(req.query)
 
-        if isinstance(req.body, bytes):
+        if req.body and isinstance(req.body, bytes):
             try:
                 params.update(
                     FormData(req.body)
