@@ -15,7 +15,7 @@ for deps in extras.values():
 
 setup(
     name='restless-cloud',
-    version='0.1.0',
+    version='0.1.1',
     author="Joaquim Ventura",
     author_email="allaphor@gmail.com",
     description='A router for AWS Lambda and Azure Functions',
