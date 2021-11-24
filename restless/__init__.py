@@ -83,7 +83,7 @@ class PathHandler:
 
         expected_type = self.sig.return_annotation[status]
 
-        if isinstance(body, Iterable) and not isinstance(body, (dict, str, BaseModel)):
+        if isinstance(body, Iterable) and not isinstance(body, (dict, str, BaseModel, bytes)):
             body = list(body)
 
             assert all(

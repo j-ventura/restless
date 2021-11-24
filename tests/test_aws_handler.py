@@ -10,9 +10,68 @@ import json
 from datetime import datetime
 from typing import List, Optional
 from enum import Enum
+from restless.security import Restrict
 
 
 class TestHandler(TestCase):
+    def testRestrictEndpoint(self):
+        handler = Handler(Request, Response)
+
+        def checker(auth: AuthorizerParameter):
+            if auth["role"] != "admin":
+                raise Forbidden("User must be an Admin")
+
+        admin_only = Restrict(checker)
+
+        @handler.handle("post", "/route")
+        @admin_only
+        def root(user: HeaderParameter, auth: AuthorizerParameter) -> {200: bytes}:
+            return b'binary'
+
+        with self.subTest('Bad'):
+            out = handler(
+                event={
+                    "httpMethod": "post",
+                    "path": "/route",
+                    "headers": {
+                        "user": "Bob"
+                    },
+                    "requestContext": {
+                        "authorizer": {
+                            "role": "user"
+                        }
+                    }
+                }
+            )
+
+            self.assertEqual(
+                403,
+                out["statusCode"],
+                out["body"]
+            )
+
+        with self.subTest('OK'):
+            out = handler(
+                event={
+                    "httpMethod": "post",
+                    "path": "/route",
+                    "headers": {
+                        "user": "Bob"
+                    },
+                    "requestContext": {
+                        "authorizer": {
+                            "role": "admin"
+                        }
+                    }
+                }
+            )
+
+            self.assertEqual(
+                200,
+                out["statusCode"],
+                out["body"]
+            )
+
     def testAuthorizer(self):
         handler = Handler(Request, Response)
 
