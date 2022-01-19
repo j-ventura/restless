@@ -4,7 +4,7 @@ from typing import Callable, ClassVar, Iterable, List
 from inspect import signature
 from restless.interfaces import BaseRequest
 from restless.util import FormData
-from restless.parameters import BinaryParameter, BodyParameter, AuthorizerParameter
+from restless.parameters import BinaryParameter, BodyParameter, AuthorizerParameter, FormParameter, FormFile
 from restless.errors import Forbidden, Unauthorized, Missing, BadRequest
 from pydantic.error_wrappers import ValidationError
 from restless.security import Security
@@ -38,11 +38,11 @@ class PathHandler:
             params.update(req.query)
 
         if req.body and isinstance(req.body, bytes):
-            try:
+            if any(param in {FormParameter, FormFile} for param in self.parameters.values()):
                 params.update(
                     FormData(req.body)
                 )
-            except AttributeError:
+            else:
                 params["body"] = req.body
 
         for param, value in params.items():

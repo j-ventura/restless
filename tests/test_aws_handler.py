@@ -431,6 +431,32 @@ class TestHandler(TestCase):
             out
         )
 
+    def testUrlEncodedForm(self):
+        handler = LambdaHandler()
+
+        @handler.handle('post', '/some/path')
+        def get_basic(parameter: FormParameter) -> {200: dict}:
+            return {"parameter_value": parameter}
+
+        out = handler(
+            {
+                "path": "/some/path",
+                "httpMethod": 'post',
+                "body": b64encode(b'parameter=ABC&other_parameter=meh').decode(),
+                'isBase64Encoded': True
+            }
+        )
+
+        self.assertEqual(
+            {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'isBase64Encoded': False,
+                'body': '{"parameter_value": "ABC"}'
+            },
+            out
+        )
+
     def testFormsParameter(self):
         handler = LambdaHandler()
 

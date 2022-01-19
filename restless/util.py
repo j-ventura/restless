@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Iterable
 import re
 from collections import namedtuple
+import urllib.parse
 
 C2S1 = re.compile('(.)([A-Z][a-z]+)')
 C2S2 = re.compile('([a-z0-9])([A-Z])')
@@ -74,19 +75,25 @@ class FormData(dict):
 
     def __init__(self, payload: bytes):
         super().__init__()
-        boundary = self.DELIMITER.match(payload).group(1)
-
-        data_re = re.compile(
-            boundary + b'\r\nContent-Disposition: form-data; (.*?)\r\n(?=' + boundary + b')', re.DOTALL
-        )
-
-        for part in data_re.findall(payload):
-            names, data = part.split(b'\r\n\r\n', 1)
-            names = names.decode()
-
-            if 'filename' in names:
-                name, filename, content_type = self.FILE_RE.search(names).groups()
-                self[name] = self.File(filename, data, content_type)
-            else:
-                name = self.KEY_VALUE_RE.match(names).group(1)
-                self[name] = data.decode()
+        
+        if match := self.DELIMITER.match(payload):
+            boundary = match.group(1)
+    
+            data_re = re.compile(
+                boundary + b'\r\nContent-Disposition: form-data; (.*?)\r\n(?=' + boundary + b')', re.DOTALL
+            )
+    
+            for part in data_re.findall(payload):
+                names, data = part.split(b'\r\n\r\n', 1)
+                names = names.decode()
+    
+                if 'filename' in names:
+                    name, filename, content_type = self.FILE_RE.search(names).groups()
+                    self[name] = self.File(filename, data, content_type)
+                else:
+                    name = self.KEY_VALUE_RE.match(names).group(1)
+                    self[name] = data.decode()
+        
+        else:
+            for k, v in urllib.parse.parse_qsl(payload.decode('utf-8')):
+                self[k] = v
